@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_location"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Location" />
+        <item
+            android:id="@+id/nav_hotel"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Hotel" />
+        <item
+            android:id="@+id/nav_police"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Police Station" />
+        <item
+            android:id="@+id/nav_recent_event"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Recent Event" />
+        <item
+            android:id="@+id/nav_images"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Images" />
+        <item
+            android:id="@+id/nav_prev_tours"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Previous Tours" />
+    </group>
+
+</menu>

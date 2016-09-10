@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">BD Travel Magazine</string>
-    <string name="google_maps_key">BD Travel Magazine</string>
+    <!--
+    Before you run your application, you need a Google Maps API key.
+
+    To get one, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false"> AIzaSyCgW9Ej2vNggmiXkfrE8Smtt7_69EvqbPk </string>
+
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

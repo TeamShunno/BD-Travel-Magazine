@@ -1,48 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/nav_trends"
+        android:icon="@drawable/ic_trending_up_black_24dp"
+        android:title="Trends" />
 
-
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_barishal"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Barishal" />
-        <item
-            android:id="@+id/nav_chittagong"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Chittagong" />
-        <item
-            android:id="@+id/nav_dhaka"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Dhaka" />
-        <item
-            android:id="@+id/nav_khulna"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Khulna" />
-        <item
-            android:id="@+id/nav_mymensingh"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Mymensingh" />
-        <item
-            android:id="@+id/nav_rajshahi"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Rajshahi" />
-        <item
-            android:id="@+id/nav_rangpur"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Rangpur" />
-        <item
-            android:id="@+id/nav_sylhet"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Sylhet" />
-    </group>
+    <item android:title="Places">
+        <menu>
+            <item
+                android:id="@+id/nav_barishal"
+                android:icon="@drawable/ic_room_black_24dp"
+                android:title="Barishal" />
+            <item
+                android:id="@+id/nav_chittagong"
+                android:icon="@drawable/ic_room_black_24dp"
+                android:title="Chittagong" />
+            <item
+                android:id="@+id/nav_dhaka"
+                android:icon="@drawable/ic_room_black_24dp"
+                android:title="Dhaka" />
+            <item
+                android:id="@+id/nav_khulna"
+                android:icon="@drawable/ic_room_black_24dp"
+                android:title="Khulna" />
+            <item
+                android:id="@+id/nav_mymensingh"
+                android:icon="@drawable/ic_room_black_24dp"
+                android:title="Mymensingh" />
+            <item
+                android:id="@+id/nav_rajshahi"
+                android:icon="@drawable/ic_room_black_24dp"
+                android:title="Rajshahi" />
+            <item
+                android:id="@+id/nav_rangpur"
+                android:icon="@drawable/ic_room_black_24dp"
+                android:title="Rangpur" />
+            <item
+                android:id="@+id/nav_sylhet"
+                android:icon="@drawable/ic_room_black_24dp"
+                android:title="Sylhet" />
+        </menu>
+    </item>
 
     <item android:title="Us">
         <menu>
             <item
-                android:id="@+id/nav_about"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_info_black_24dp"
                 android:title="About" />
         </menu>
     </item>

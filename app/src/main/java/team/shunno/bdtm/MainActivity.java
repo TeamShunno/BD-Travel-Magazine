@@ -1,20 +1,46 @@
 package team.shunno.bdtm;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ListView.OnItemClickListener,
+        View.OnClickListener {
+
+    final String[] from = new String[]{
+            DatabaseHelper.place_ID,
+            DatabaseHelper.Place_Name
+    };
+    final int[] to = new int[]{
+            R.id.textViewPlaceID,
+            R.id.textViewPlaceName
+    };
+    ListView listView;
+    SimpleCursorAdapter adapter;
+    String _placeId, _gmapLoc;
+    /**
+     * Database manager object
+     */
+    private DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,15 +48,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -40,6 +57,110 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        /**
+         * Init Database
+         */
+        DatabaseHelper.DB_PATH = getDatabasePath(DatabaseHelper.DB_NAME).getAbsolutePath();
+        dbManager = new DBManager(MainActivity.this);
+        dbManager.open();
+
+        /**
+         * Init ListView
+         */
+        Cursor cursor = null;
+        listView = (ListView) findViewById(R.id.resultList);
+        listView.setOnItemClickListener(MainActivity.this);
+        listView.setEmptyView(findViewById(R.id.empty)); // for empty view
+        adapter = new SimpleCursorAdapter(this, R.layout.place_result_layout, cursor, from, to, 0);
+        adapter.notifyDataSetChanged();
+        listView.setAdapter(adapter);
+
+        /**
+         * Init Treding place corner button
+         */
+        ImageButton btn_more_1 = (ImageButton) findViewById(R.id.btn_more_1);
+        ImageButton btn_more_2 = (ImageButton) findViewById(R.id.btn_more_2);
+        ImageButton btn_more_3 = (ImageButton) findViewById(R.id.btn_more_3);
+        btn_more_1.setOnClickListener(MainActivity.this);
+        btn_more_2.setOnClickListener(MainActivity.this);
+        btn_more_3.setOnClickListener(MainActivity.this);
+
+        setTradings();
+    }
+
+    void setTradings() {
+
+        showTrendingViews();
+
+        /**
+         * https://developer.android.com/reference/android/util/DisplayMetrics.html
+         * Get display size
+         */
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        //image size will be half of the screen size.
+        LinearLayout.LayoutParams layoutParams =
+                new LinearLayout.LayoutParams(metrics.widthPixels, metrics.heightPixels / 2);
+        int width = metrics.widthPixels, height = metrics.heightPixels / 2;
+
+
+        /**
+         * Loop 3 times to fill 3 trend place
+         */
+        for (int j = 1; j <= 3; j++) {
+            Cursor cursor = dbManager.getPlaceInfoByPlaceId(j);
+
+            int layoutID = getResources().getIdentifier("div_" + String.valueOf(j), "id", getPackageName());
+            int cornerButtonId = getResources().getIdentifier("btn_more_" + String.valueOf(j), "id", getPackageName());
+
+            LinearLayout div_layout = (LinearLayout) findViewById(layoutID);
+            ImageButton imageButton = (ImageButton) findViewById(cornerButtonId);
+
+            /**
+             * Saving the place id to Corner Image Button tag property
+             */
+            imageButton.setTag(R.string.key_place_id, cursor.getString(cursor.getColumnIndex(DatabaseHelper.place_ID)));
+            imageButton.setTag(R.string.key_gmap_loc, cursor.getString(cursor.getColumnIndex(DatabaseHelper.GMap_Loc)));
+
+            if (cursor != null) {
+                int id = getResources().getIdentifier("div_title_" + String.valueOf(j), "id", getPackageName());
+                TextView textView = (TextView) findViewById(id);
+                textView.setText(cursor.getString(cursor.getColumnIndex(DatabaseHelper.Place_Name)));
+
+                String imgStr = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Images));
+
+                String[] imgNames = imgStr.split(",");
+
+                //int totalImg = imgNames.length;
+                /**
+                 * 3 x 5 = 15 pics load make Overflow of memory! so we just load 2 imgs of every place
+                 */
+                for (int k = 0; k < 2; k++) {
+                    ImageView imageView = new ImageView(MainActivity.this);
+
+                    /**
+                     * http://stackoverflow.com/questions/21856260/how-can-i-convert-string-to-drawable
+                     * Image drawable names img_placeID_imageNumber. e.g., img_1_1 etc.
+                     *
+                     * https://developer.android.com/guide/practices/screens_support.html
+                     * Max image size should be 2560px x 1600px
+                     */
+                    int drawableId = getResources().getIdentifier(imgNames[k], "drawable", getPackageName());
+
+                    imageView.setImageBitmap(
+                            utils.decodeSampledBitmapFromResource(getResources(), drawableId, width, height));
+
+                    imageView.setLayoutParams(layoutParams);
+                    imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    div_layout.addView(imageView);
+                }
+            }
+
+        }
+
     }
 
     @Override
@@ -52,50 +173,178 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
+        if (id == R.id.nav_trends) {
+
+            showTrendingViews();
+
+            adapter.changeCursor(null);
+
+        } else if (id == R.id.nav_barishal) {
+
+            adapter.changeCursor(dbManager.getPlaceNamesByDivision("Barishal"));
+
+            showResultViews();
+
+        } else if (id == R.id.nav_chittagong) {
+
+            adapter.changeCursor(dbManager.getPlaceNamesByDivision("Chittagong"));
+
+            showResultViews();
+
+        } else if (id == R.id.nav_dhaka) {
+
+            adapter.changeCursor(dbManager.getPlaceNamesByDivision("Dhaka"));
+
+            showResultViews();
+
+        } else if (id == R.id.nav_khulna) {
+
+            adapter.changeCursor(dbManager.getPlaceNamesByDivision("Khulna"));
+
+            showResultViews();
+
+        } else if (id == R.id.nav_mymensingh) {
+
+            adapter.changeCursor(dbManager.getPlaceNamesByDivision("Mymensingh"));
+
+            showResultViews();
+
+        } else if (id == R.id.nav_rajshahi) {
+
+            adapter.changeCursor(dbManager.getPlaceNamesByDivision("Rajshahi"));
+
+            showResultViews();
+
+        } else if (id == R.id.nav_rangpur) {
+
+            adapter.changeCursor(dbManager.getPlaceNamesByDivision("Rangpur"));
+
+            showResultViews();
+
+        } else if (id == R.id.nav_sylhet) {
+
+            adapter.changeCursor(dbManager.getPlaceNamesByDivision("Sylhet"));
+
+            showResultViews();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    void showTrendingViews() {
+        findViewById(R.id.treadingLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.textViewTrending).setVisibility(View.VISIBLE);
+        findViewById(R.id.resultLayout).setVisibility(View.GONE);
+    }
+
+    void showResultViews() {
+        findViewById(R.id.treadingLayout).setVisibility(View.GONE);
+        findViewById(R.id.textViewTrending).setVisibility(View.GONE);
+        findViewById(R.id.resultLayout).setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Callback method to be invoked when an item in this AdapterView has
+     * been clicked.
+     * <p/>
+     * Implementers can call getItemAtPosition(position) if they need
+     * to access the data associated with the selected item.
+     *
+     * @param parent   The AdapterView where the click happened.
+     * @param view     The view within the AdapterView that was clicked (this
+     *                 will be a view provided by the adapter)
+     * @param position The position of the view in the adapter.
+     * @param id       The row id of the item that was clicked.
+     */
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        switch (parent.getId()) {
+            case R.id.resultList:
+
+                TextView idTextView = (TextView) view.findViewById(R.id.textViewPlaceID);
+
+                String placeId = idTextView.getText().toString();
+
+                showDetailsView(placeId);
+
+                break;
+        }
+    }
+
+    void showDetailsView(String placeId) {
+        Intent details_view_intent = new Intent(getApplicationContext(), detailsView.class);
+
+        /**
+         * Send the place id
+         */
+        details_view_intent.putExtra("place_id", placeId);
+
+        startActivity(details_view_intent);
+    }
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param v The view that was clicked.
+     */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_more_1:
+            case R.id.btn_more_2:
+            case R.id.btn_more_3:
+
+                /**
+                 * In the tag property of Trend Corner button, we saved the place IDs.
+                 *
+                 * Saving the place id in global variable: _placeId
+                 */
+                _placeId = (String) v.getTag(R.string.key_place_id);
+                _gmapLoc = (String) v.getTag(R.string.key_gmap_loc);
+
+                //Creating the instance of PopupMenu
+                PopupMenu popupOpts = new PopupMenu(MainActivity.this, findViewById(v.getId()));
+                //Inflating the Popup using xml file
+                popupOpts.getMenuInflater()
+                        .inflate(R.menu.popup_trend_place, popupOpts.getMenu());
+
+                //registering popup with OnMenuItemClickListener
+                popupOpts.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+
+                        switch (item.getItemId()) {
+                            case R.id.item_get_direction:
+
+                                Uri gmmIntentUri = Uri.parse("google.navigation:q=" + _gmapLoc);
+                                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                mapIntent.setPackage("com.google.android.apps.maps");
+                                startActivity(mapIntent);
+
+                                break;
+                            case R.id.item_view_details:
+
+                                showDetailsView(_placeId);
+
+                                break;
+                        }
+
+                        return true;
+                    }
+                });
+
+                popupOpts.show();
+
+                break;
+        }
     }
 }

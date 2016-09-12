@@ -2,9 +2,7 @@ package team.shunno.bdtm;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,7 +22,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import java.lang.ref.WeakReference;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ListView.OnItemClickListener,
@@ -113,7 +111,7 @@ public class MainActivity extends AppCompatActivity
 
         //image size will be half of the screen size.
         LinearLayout.LayoutParams layoutParams =
-                new LinearLayout.LayoutParams(metrics.widthPixels, metrics.heightPixels / 2);
+                new LinearLayout.LayoutParams(sImageWidth, sImageHeight);
 
         /**
          * Loop 3 times to fill 3 trend place
@@ -156,16 +154,19 @@ public class MainActivity extends AppCompatActivity
                      * Image drawable names img_placeID_imageNumber. e.g., img_1_1 etc.
                      *
                      * https://developer.android.com/guide/practices/screens_support.html
-                     * Max image size should be 2560px x 1600px
+                     * Max image size should be 2560px x 1600px.
+                     * In app image width will be the screen width.
                      */
                     int drawableId = getResources().getIdentifier(imgNames[k], "drawable", getPackageName());
 
-//                    imageView.setImageBitmap(
-//                            utils.decodeSampledBitmapFromResource(getResources(), drawableId, width, height));
                     /**
-                     * Doing it using AsyncTask
+                     * Using Picasso
                      */
-                    loadBitmap(drawableId, imageView);
+                    Picasso.with(MainActivity.this)
+                            .load(drawableId)
+                            .resize(sImageWidth, sImageHeight)
+                            .centerCrop()
+                            .into(imageView);
 
                     imageView.setLayoutParams(layoutParams);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -362,42 +363,43 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void loadBitmap(int resId, ImageView imageView) {
-        BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-        task.execute(resId);
-    }
-
-    /**
-     * Processing Bitmaps Off the UI Thread
-     * https://developer.android.com/training/displaying-bitmaps/process-bitmap.html
-     */
-    class BitmapWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
-        private final WeakReference<ImageView> imageViewReference;
-        private int data = 0;
-
-        public BitmapWorkerTask(ImageView imageView) {
-            // Use a WeakReference to ensure the ImageView can be garbage collected
-            imageViewReference = new WeakReference<ImageView>(imageView);
-        }
-
-        // Decode image in background.
-        @Override
-        protected Bitmap doInBackground(Integer... params) {
-            data = params[0];
-            return utils.decodeSampledBitmapFromResource(getResources(), data, sImageWidth, sImageHeight);
-        }
-
-        // Once complete, see if ImageView is still around and set bitmap.
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (imageViewReference != null && bitmap != null) {
-                final ImageView imageView = imageViewReference.get();
-                if (imageView != null) {
-                    imageView.setImageBitmap(bitmap);
-                    //todo
-                }
-            }
-        }
-    }
+//    public void loadBitmap(int resId, ImageView imageView) {
+//        BitmapWorkerTask task = new BitmapWorkerTask(imageView);
+//        task.execute(resId);
+//    }
+//
+//    /**
+//     * Processing Bitmaps Off the UI Thread
+//     * https://developer.android.com/training/displaying-bitmaps/process-bitmap.html
+//     */
+//    class BitmapWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
+//        private final WeakReference<ImageView> imageViewReference;
+//        private int data = 0;
+//
+//        public BitmapWorkerTask(ImageView imageView) {
+//            // Use a WeakReference to ensure the ImageView can be garbage collected
+//            imageViewReference = new WeakReference<ImageView>(imageView);
+//        }
+//
+//        // Decode image in background.
+//        @Override
+//        protected Bitmap doInBackground(Integer... params) {
+//            data = params[0];
+//            return utils.decodeSampledBitmapFromResource(getResources(), data, sImageWidth, sImageHeight);
+//        }
+//
+//        // Once complete, see if ImageView is still around and set bitmap.
+//        @Override
+//        protected void onPostExecute(Bitmap bitmap) {
+//            if (imageViewReference != null && bitmap != null) {
+//                final ImageView imageView = imageViewReference.get();
+//                if (imageView != null) {
+//
+//                    imageView.setImageBitmap(bitmap);
+//                    //todo
+//                }
+//            }
+//        }
+//    }
 
 }

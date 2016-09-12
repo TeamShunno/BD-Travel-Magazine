@@ -26,6 +26,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
 
 /**
  * Details View Code File
@@ -130,9 +131,6 @@ public class detailsView extends AppCompatActivity
             LinearLayout.LayoutParams layoutParams =
                     new LinearLayout.LayoutParams(metrics.widthPixels, metrics.heightPixels / 2);
 
-            int width = metrics.widthPixels,
-                    height = metrics.heightPixels / 3;
-
             LinearLayout div_layout = (LinearLayout) findViewById(R.id.imgGallery);
 
             String[] imgNames = Images.split(",");
@@ -142,8 +140,14 @@ public class detailsView extends AppCompatActivity
 
                 int drawableId = getResources().getIdentifier(imgName, "drawable", getPackageName());
 
-                imageView.setImageBitmap(
-                        utils.decodeSampledBitmapFromResource(getResources(), drawableId, width, height));
+                /**
+                 * Using Picasso
+                 */
+                Picasso.with(detailsView.this)
+                        .load(drawableId)
+                        .resize(metrics.widthPixels, metrics.heightPixels / 2)
+                        .centerCrop()
+                        .into(imageView);
 
                 imageView.setLayoutParams(layoutParams);
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);

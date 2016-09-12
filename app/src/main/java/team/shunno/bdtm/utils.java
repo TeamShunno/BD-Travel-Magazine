@@ -30,11 +30,6 @@ public class utils {
     /**
      * https://developer.android.com/training/displaying-bitmaps/load-bitmap.html
      * Bitmap Image Manupulation
-     *
-     * @param options
-     * @param reqWidth
-     * @param reqHeight
-     * @return
      */
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -66,6 +61,17 @@ public class utils {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeResource(res, resId, options);
+
+        int photoW = options.outWidth;
+        int photoH = options.outHeight;
+        /**
+         * Mine (Shohag)
+         */
+        /* Figure out which way needs to be reduced less */
+//        int scaleFactor = 1;
+//        if ((reqWidth > 0) || (reqHeight > 0)) {
+//            scaleFactor = Math.min(photoW/reqWidth, photoH/reqHeight);
+//        }
 
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);

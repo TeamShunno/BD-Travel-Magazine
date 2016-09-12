@@ -2,7 +2,9 @@ package team.shunno.bdtm;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +24,8 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ListView.OnItemClickListener,
         View.OnClickListener {
@@ -37,6 +41,9 @@ public class MainActivity extends AppCompatActivity
     ListView listView;
     SimpleCursorAdapter adapter;
     String _placeId, _gmapLoc;
+
+    int sImageWidth = 0, sImageHeight = 0;
+
     /**
      * Database manager object
      */
@@ -101,14 +108,17 @@ public class MainActivity extends AppCompatActivity
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
+        sImageWidth = metrics.widthPixels;
+        sImageHeight = metrics.heightPixels / 2;
+
         //image size will be half of the screen size.
         LinearLayout.LayoutParams layoutParams =
                 new LinearLayout.LayoutParams(metrics.widthPixels, metrics.heightPixels / 2);
-        int width = metrics.widthPixels, height = metrics.heightPixels / 2;
-
 
         /**
          * Loop 3 times to fill 3 trend place
+         *
+         * Must Start loop from 1, because the view ids name are started from 1.
          */
         for (int j = 1; j <= 3; j++) {
             Cursor cursor = dbManager.getPlaceInfoByPlaceId(j);
@@ -150,8 +160,12 @@ public class MainActivity extends AppCompatActivity
                      */
                     int drawableId = getResources().getIdentifier(imgNames[k], "drawable", getPackageName());
 
-                    imageView.setImageBitmap(
-                            utils.decodeSampledBitmapFromResource(getResources(), drawableId, width, height));
+//                    imageView.setImageBitmap(
+//                            utils.decodeSampledBitmapFromResource(getResources(), drawableId, width, height));
+                    /**
+                     * Doing it using AsyncTask
+                     */
+                    loadBitmap(drawableId, imageView);
 
                     imageView.setLayoutParams(layoutParams);
                     imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -347,4 +361,43 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
+
+    public void loadBitmap(int resId, ImageView imageView) {
+        BitmapWorkerTask task = new BitmapWorkerTask(imageView);
+        task.execute(resId);
+    }
+
+    /**
+     * Processing Bitmaps Off the UI Thread
+     * https://developer.android.com/training/displaying-bitmaps/process-bitmap.html
+     */
+    class BitmapWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+        private int data = 0;
+
+        public BitmapWorkerTask(ImageView imageView) {
+            // Use a WeakReference to ensure the ImageView can be garbage collected
+            imageViewReference = new WeakReference<ImageView>(imageView);
+        }
+
+        // Decode image in background.
+        @Override
+        protected Bitmap doInBackground(Integer... params) {
+            data = params[0];
+            return utils.decodeSampledBitmapFromResource(getResources(), data, sImageWidth, sImageHeight);
+        }
+
+        // Once complete, see if ImageView is still around and set bitmap.
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (imageViewReference != null && bitmap != null) {
+                final ImageView imageView = imageViewReference.get();
+                if (imageView != null) {
+                    imageView.setImageBitmap(bitmap);
+                    //todo
+                }
+            }
+        }
+    }
+
 }

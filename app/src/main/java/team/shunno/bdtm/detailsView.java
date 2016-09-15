@@ -8,15 +8,19 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +45,8 @@ public class detailsView extends AppCompatActivity
 
     String[] strLatLng;
     TextView textView;
+    Button b2;
+    RatingBar rt,rt2;
     /**
      * Database manager object
      */
@@ -243,6 +249,10 @@ public class detailsView extends AppCompatActivity
 
             Toast.makeText(detailsView.this, "Comming Soon...", Toast.LENGTH_LONG).show();
 
+        } else if(id==R.id.nav_rating)
+        {
+
+            showrating();
         }
 
 
@@ -268,6 +278,35 @@ public class detailsView extends AppCompatActivity
         findViewById(R.id.mapLayout).setVisibility(View.GONE);
         findViewById(R.id.textLayout).setVisibility(View.VISIBLE);
         findViewById(R.id.imageLayout).setVisibility(View.GONE);
+
+    }
+    void showrating()
+    {
+        AlertDialog.Builder alert=new AlertDialog.Builder(detailsView.this);
+        LayoutInflater inflater= LayoutInflater.from(this);
+        final View inf= inflater.inflate(R.layout.rating_layout,null);
+        alert.setView(inf);
+        final AlertDialog alertdi=alert.create();
+        alertdi.show();
+        b2=(Button)inf.findViewById(R.id.button);
+        rt=(RatingBar)inf.findViewById(R.id.ratingBar);
+        rt2=(RatingBar)inf.findViewById(R.id.ratingBar2);
+        rt2.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+
+                Toast.makeText(detailsView.this, String.valueOf(v), Toast.LENGTH_SHORT).show();
+            }
+        });
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(detailsView.this, "Thanks For the Rating", Toast.LENGTH_SHORT).show();
+                alertdi.dismiss();
+            }
+        });
+
 
     }
 

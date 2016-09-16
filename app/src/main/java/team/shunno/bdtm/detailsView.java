@@ -46,7 +46,8 @@ public class detailsView extends AppCompatActivity
     String[] strLatLng;
     TextView textView;
     Button b2;
-    RatingBar rt,rt2;
+    RatingBar rt, rt2;
+    float Rating;
     /**
      * Database manager object
      */
@@ -56,7 +57,7 @@ public class detailsView extends AppCompatActivity
      */
     private GoogleMap mMap;
     private String place_id, Division_Name, District_Name, Place_Name, Imp_Number, Hotel_Info, Food_Info, Recent_Info,
-            Images, GMap_Loc, Rating;
+            Images, GMap_Loc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +110,7 @@ public class detailsView extends AppCompatActivity
             Recent_Info = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Recent_Info));
             Images = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Images));
             GMap_Loc = cursor.getString(cursor.getColumnIndex(DatabaseHelper.GMap_Loc));
-            Rating = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Rating));
+            Rating = cursor.getFloat(cursor.getColumnIndex(DatabaseHelper.Rating));
 
             /**
              * Set datas
@@ -249,10 +250,10 @@ public class detailsView extends AppCompatActivity
 
             Toast.makeText(detailsView.this, "Comming Soon...", Toast.LENGTH_LONG).show();
 
-        } else if(id==R.id.nav_rating)
-        {
+        } else if (id == R.id.nav_rating) {
 
-            showrating();
+            showRating();
+
         }
 
 
@@ -280,17 +281,20 @@ public class detailsView extends AppCompatActivity
         findViewById(R.id.imageLayout).setVisibility(View.GONE);
 
     }
-    void showrating()
-    {
-        AlertDialog.Builder alert=new AlertDialog.Builder(detailsView.this);
-        LayoutInflater inflater= LayoutInflater.from(this);
-        final View inf= inflater.inflate(R.layout.rating_layout,null);
+
+    void showRating() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(detailsView.this);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final View inf = inflater.inflate(R.layout.rating_layout, null);
         alert.setView(inf);
-        final AlertDialog alertdi=alert.create();
+        final AlertDialog alertdi = alert.create();
         alertdi.show();
-        b2=(Button)inf.findViewById(R.id.button);
-        rt=(RatingBar)inf.findViewById(R.id.ratingBar);
-        rt2=(RatingBar)inf.findViewById(R.id.ratingBar2);
+        b2 = (Button) inf.findViewById(R.id.btnSubmitRating);
+        rt = (RatingBar) inf.findViewById(R.id.ratingBar);
+        rt2 = (RatingBar) inf.findViewById(R.id.ratingBar2);
+
+        rt.setRating(Rating);
+
         rt2.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
@@ -306,8 +310,6 @@ public class detailsView extends AppCompatActivity
                 alertdi.dismiss();
             }
         });
-
-
     }
 
     /**

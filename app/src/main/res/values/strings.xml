@@ -16,7 +16,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="pref_update_db">pref_update_db</string>
-    <string name="trending_place">Treding places...</string>
+    <string name="trending_place">Treding places…</string>
     <string name="no_info_found">No Information Found!</string>
     <string name="key_place_id">key_place_id</string>
     <string name="key_gmap_loc">key_gmap_loc</string>

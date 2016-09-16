@@ -3,55 +3,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/accent_material_light">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="USERS RATING"
         android:id="@+id/textView2"
-        android:layout_marginTop="85dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="#faf8f8" />
-
-    <RatingBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="USERS RATING"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <RatingBar
         android:id="@+id/ratingBar"
-        android:layout_below="@+id/textView2"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:numStars="5"
-        android:rating="4.5" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:isIndicator="true"
+        android:stepSize="0.1" />
 
     <TextView
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="YOUR RATING"
-        android:id="@+id/textView3"
-        android:layout_below="@+id/ratingBar"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="#fcf8f8" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/ratingBar2"
-        android:layout_below="@+id/textView3"
-        android:layout_toRightOf="@+id/textView2"
-        android:layout_toEndOf="@+id/textView2" />
-
-    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit"
-        android:id="@+id/button"
-        android:layout_below="@+id/ratingBar2"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_gravity="center"
+        android:stepSize="0.1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dialog_button_bar_height"
+        android:layout_marginTop="@dimen/dialog_button_bar_top_margin"
+        android:gravity="center|end">
+
+        <Button
+            android:id="@+id/btnSubmitRating"
+            style="@style/dialog_button"
+            android:text="Submit" />
+
+    </LinearLayout>
 </LinearLayout>

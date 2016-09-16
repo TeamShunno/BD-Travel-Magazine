@@ -31,7 +31,7 @@
         android:title="Previous Tours" />
     <item
         android:id="@+id/nav_rating"
-        android:icon="@drawable/ic_chrome_reader_mode_black_24dp"
+        android:icon="@drawable/ic_stars_black_24dp"
         android:title="Show Rating" />
 
 </menu>

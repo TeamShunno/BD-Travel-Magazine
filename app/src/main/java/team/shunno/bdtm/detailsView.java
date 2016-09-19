@@ -90,8 +90,30 @@ public class detailsView extends AppCompatActivity
         Intent intent = getIntent();
         place_id = intent.getStringExtra("place_id");
 
+        initLeftPanel();
+
         initDetailsViews();
 
+    }
+
+    void initLeftPanel() {
+        ImageButton btnHome = (ImageButton) findViewById(R.id.btnHome);
+        ImageButton btnLocation = (ImageButton) findViewById(R.id.btnLocation);
+        ImageButton btnHotel = (ImageButton) findViewById(R.id.btnHotel);
+        ImageButton btnPolice = (ImageButton) findViewById(R.id.btnPolice);
+        ImageButton btnRecentEvent = (ImageButton) findViewById(R.id.btnRecentEvent);
+        ImageButton btnImages = (ImageButton) findViewById(R.id.btnImages);
+        ImageButton btnPrevTours = (ImageButton) findViewById(R.id.btnPrevTours);
+        ImageButton btnRating = (ImageButton) findViewById(R.id.btnRating);
+
+        btnHome.setOnClickListener(detailsView.this);
+        btnLocation.setOnClickListener(detailsView.this);
+        btnHotel.setOnClickListener(detailsView.this);
+        btnPolice.setOnClickListener(detailsView.this);
+        btnRecentEvent.setOnClickListener(detailsView.this);
+        btnImages.setOnClickListener(detailsView.this);
+        btnPrevTours.setOnClickListener(detailsView.this);
+        btnRating.setOnClickListener(detailsView.this);
     }
 
     void initDetailsViews() {
@@ -113,7 +135,7 @@ public class detailsView extends AppCompatActivity
             Rating = cursor.getFloat(cursor.getColumnIndex(DatabaseHelper.Rating));
 
             /**
-             * Set datas
+             * Setting data
              */
             ((TextView) findViewById(R.id.textViewDivision)).setText(Division_Name);
             ((TextView) findViewById(R.id.textViewDistrict)).setText(District_Name);
@@ -328,6 +350,57 @@ public class detailsView extends AppCompatActivity
                 startActivity(mapIntent);
 
                 break;
+            case R.id.btnHome:
+
+                finish();
+
+                break;
+            case R.id.btnLocation:
+
+                showLocationInfo();
+
+                break;
+            case R.id.btnHotel:
+
+                if (!TextUtils.isEmpty(Hotel_Info))
+                    textView.setText(Hotel_Info);
+                else
+                    textView.setText(getString(R.string.no_info_found));
+
+                showTextInfo();
+
+                break;
+            case R.id.btnPolice:
+
+                if (!TextUtils.isEmpty(Imp_Number))
+                    textView.setText(Imp_Number);
+                else
+                    textView.setText(getString(R.string.no_info_found));
+
+                showTextInfo();
+
+                break;
+            case R.id.btnRecentEvent:
+
+                Toast.makeText(detailsView.this, "Comming Soon...", Toast.LENGTH_LONG).show();
+
+                break;
+            case R.id.btnImages:
+
+                showImageInfo();
+
+                break;
+            case R.id.btnPrevTours:
+
+                Toast.makeText(detailsView.this, "Comming Soon...", Toast.LENGTH_LONG).show();
+
+                break;
+            case R.id.btnRating:
+
+                showRating();
+
+                break;
+
         }
     }
 }

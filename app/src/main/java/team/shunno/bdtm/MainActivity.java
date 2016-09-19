@@ -56,10 +56,8 @@ public class MainActivity extends AppCompatActivity
         /// Drawer code
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-       ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -187,9 +185,15 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (!isTrendsOpened()) {
+            showTrendingViews();
         } else {
             super.onBackPressed();
         }
+    }
+
+    boolean isTrendsOpened() {
+        return findViewById(R.id.treadingLayout).getVisibility() == View.VISIBLE;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -366,44 +370,5 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
-
-//    public void loadBitmap(int resId, ImageView imageView) {
-//        BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-//        task.execute(resId);
-//    }
-//
-//    /**
-//     * Processing Bitmaps Off the UI Thread
-//     * https://developer.android.com/training/displaying-bitmaps/process-bitmap.html
-//     */
-//    class BitmapWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
-//        private final WeakReference<ImageView> imageViewReference;
-//        private int data = 0;
-//
-//        public BitmapWorkerTask(ImageView imageView) {
-//            // Use a WeakReference to ensure the ImageView can be garbage collected
-//            imageViewReference = new WeakReference<ImageView>(imageView);
-//        }
-//
-//        // Decode image in background.
-//        @Override
-//        protected Bitmap doInBackground(Integer... params) {
-//            data = params[0];
-//            return utils.decodeSampledBitmapFromResource(getResources(), data, sImageWidth, sImageHeight);
-//        }
-//
-//        // Once complete, see if ImageView is still around and set bitmap.
-//        @Override
-//        protected void onPostExecute(Bitmap bitmap) {
-//            if (imageViewReference != null && bitmap != null) {
-//                final ImageView imageView = imageViewReference.get();
-//                if (imageView != null) {
-//
-//                    imageView.setImageBitmap(bitmap);
-//                    //todo
-//                }
-//            }
-//        }
-//    }
 
 }

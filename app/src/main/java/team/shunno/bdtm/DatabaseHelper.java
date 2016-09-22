@@ -29,6 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String Division_Name = "DivisionName";
     public static final String District_Name = "DistrictName";
     public static final String Place_Name = "PlaceName";
+    public static final String Place_Desc = "PlaceDesc";
     public static final String Imp_Number = "ImpNumber";
     public static final String Hotel_Info = "HotelInfo";
     public static final String Food_Info = "FoodInfo";

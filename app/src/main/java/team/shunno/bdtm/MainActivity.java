@@ -109,7 +109,10 @@ public class MainActivity extends AppCompatActivity
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         sImageWidth = metrics.widthPixels;
-        sImageHeight = metrics.heightPixels / 2;
+        /**
+         * Keeping ratio 16:9
+         */
+        sImageHeight = (9 * metrics.widthPixels) / 16;
 
         //image size will be half of the screen size.
         LinearLayout.LayoutParams layoutParams =

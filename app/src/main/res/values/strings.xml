@@ -11,6 +11,12 @@
     -->
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false"> AIzaSyCgW9Ej2vNggmiXkfrE8Smtt7_69EvqbPk </string>
 
+    <!--
+    Dummy text Generated from http://www.lipsum.com/
+    -->
+    <string name="dummy_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent consequat volutpat dignissim. Morbi ornare nec ligula id sagittis. Integer vulputate ex at lacus fringilla, vitae convallis nisl condimentum. Praesent ac aliquet turpis. Ut eget enim sed nunc rutrum mollis. Fusce placerat tortor non imperdiet ultricies. Duis cursus odio urna, nec posuere enim tincidunt ac. Cras commodo purus nisl, quis elementum tortor ornare ut. Integer orci quam, tristique nec iaculis quis, porttitor vitae lacus. Integer venenatis lacus at urna suscipit, egestas luctus sem tristique. Duis egestas non tortor a consequat.
+
+Cras vitae ipsum eros. Donec laoreet augue erat, at dapibus metus lobortis et. Integer commodo dui quis libero eleifend, ac sodales mauris vulputate. In pellentesque ex orci, a sagittis erat ornare vel. In elementum sed sapien et sodales. Proin libero mauris, dictum in nunc quis, sollicitudin scelerisque diam. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Quisque sed lectus diam. Proin vel consequat sem. Maecenas nibh nunc, egestas a magna ac, sagittis varius velit. Mauris vel diam id nunc laoreet ornare ut vel quam. Aenean vulputate ipsum massa, sit amet accumsan purus feugiat non. Mauris dapibus est et lorem iaculis tincidunt. In vel nulla et mauris porta ultricies. Cras convallis sapien vitae rhoncus pulvinar. Ut molestie dui lectus, in volutpat felis luctus sollicitudin.</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -20,4 +26,6 @@
     <string name="no_info_found">No Information Found!</string>
     <string name="key_place_id">key_place_id</string>
     <string name="key_gmap_loc">key_gmap_loc</string>
+
+
 </resources>

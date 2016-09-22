@@ -71,7 +71,7 @@ public class DBManager {
                 DatabaseHelper.Place_Name,
                 DatabaseHelper.Division_Name,
                 DatabaseHelper.District_Name,
-                DatabaseHelper.Place_Name,
+                DatabaseHelper.Place_Desc,
                 DatabaseHelper.Imp_Number,
                 DatabaseHelper.Hotel_Info,
                 DatabaseHelper.Food_Info,
@@ -104,17 +104,7 @@ public class DBManager {
     public Cursor getPlaceNamesByDivision(String divisionName) {
         String[] tableColumns = new String[]{
                 DatabaseHelper.place_ID, //_id column must needed for cursor adaptor.. O.o
-                DatabaseHelper.Place_Name,
-                DatabaseHelper.Division_Name,
-                DatabaseHelper.District_Name,
-                DatabaseHelper.Place_Name,
-                DatabaseHelper.Imp_Number,
-                DatabaseHelper.Hotel_Info,
-                DatabaseHelper.Food_Info,
-                DatabaseHelper.Recent_Info,
-                DatabaseHelper.Images,
-                DatabaseHelper.GMap_Loc,
-                DatabaseHelper.Rating
+                DatabaseHelper.Place_Name
         };
 
         String whereClause = DatabaseHelper.Division_Name + " = ?";

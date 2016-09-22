@@ -1,20 +1,16 @@
 package team.shunno.bdtm;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -34,19 +30,20 @@ import com.squareup.picasso.Picasso;
 
 /**
  * Details View Code File
- * <p/>
+ * <p>
  * Strategy:
  * Map, Text and Image layout all embedded in details_view.xml file.
  * visibility property will used to show needed views.
  */
 
 public class detailsView extends AppCompatActivity
-        implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements OnMapReadyCallback, View.OnClickListener {
 
     String[] strLatLng;
     TextView textView;
-    Button b2;
-    RatingBar rt, rt2;
+    int shortAnimTime;
+
+    View mapLayout, textLayout, imageLayout;
     float Rating;
     /**
      * Database manager object
@@ -56,24 +53,16 @@ public class detailsView extends AppCompatActivity
      * Map Object
      */
     private GoogleMap mMap;
-    private String place_id, Division_Name, District_Name, Place_Name, Imp_Number, Hotel_Info, Food_Info, Recent_Info,
+    /**
+     * Variables for storing the Data form database
+     */
+    private String place_id, Division_Name, District_Name, Place_Name, Place_Description, Imp_Number, Hotel_Info, Food_Info, Recent_Info,
             Images, GMap_Loc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_view);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_left);
-        navigationView.setNavigationItemSelectedListener(this);
 
         ImageButton imageButtonGetDirection = (ImageButton) findViewById(R.id.btn_get_direction);
         imageButtonGetDirection.setOnClickListener(detailsView.this);
@@ -89,6 +78,11 @@ public class detailsView extends AppCompatActivity
          */
         Intent intent = getIntent();
         place_id = intent.getStringExtra("place_id");
+
+        /**
+         * Set animation speed
+         */
+        shortAnimTime = getResources().getInteger(android.R.integer.config_longAnimTime);
 
         initLeftPanel();
 
@@ -114,6 +108,13 @@ public class detailsView extends AppCompatActivity
         btnImages.setOnClickListener(detailsView.this);
         btnPrevTours.setOnClickListener(detailsView.this);
         btnRating.setOnClickListener(detailsView.this);
+
+        /**
+         * The Views
+         */
+        mapLayout = findViewById(R.id.mapLayout);
+        textLayout = findViewById(R.id.textLayout);
+        imageLayout = findViewById(R.id.imageLayout);
     }
 
     void initDetailsViews() {
@@ -126,6 +127,7 @@ public class detailsView extends AppCompatActivity
             Division_Name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Division_Name));
             District_Name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.District_Name));
             Place_Name = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Place_Name));
+            Place_Description = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Place_Desc));
             Imp_Number = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Imp_Number));
             Hotel_Info = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Hotel_Info));
             Food_Info = cursor.getString(cursor.getColumnIndex(DatabaseHelper.Food_Info));
@@ -156,9 +158,14 @@ public class detailsView extends AppCompatActivity
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
+            /**
+             * Keeping ratio 16:9
+             */
+            int imageHeight = (9 * metrics.widthPixels) / 16;
+
             //image size will be half of the screen size.
             LinearLayout.LayoutParams layoutParams =
-                    new LinearLayout.LayoutParams(metrics.widthPixels, metrics.heightPixels / 2);
+                    new LinearLayout.LayoutParams(metrics.widthPixels, imageHeight);
 
             LinearLayout div_layout = (LinearLayout) findViewById(R.id.imgGallery);
 
@@ -174,7 +181,7 @@ public class detailsView extends AppCompatActivity
                  */
                 Picasso.with(detailsView.this)
                         .load(drawableId)
-                        .resize(metrics.widthPixels, metrics.heightPixels / 2)
+                        .resize(metrics.widthPixels, imageHeight)
                         .centerCrop()
                         .into(imageView);
 
@@ -184,9 +191,16 @@ public class detailsView extends AppCompatActivity
             }
 
             /**
-             * Set Title
+             * Set Title, place name & place Description
              */
             setTitle(Place_Name);
+            ((TextView) findViewById(R.id.textViewPlaceName)).setText(Place_Name);
+            ((TextView) findViewById(R.id.textViewDescription)).setText(Place_Description);
+
+            /**
+             * Set default ratings
+             */
+            ((RatingBar) findViewById(R.id.ratingBar)).setRating(Rating);
 
             /**
              * Finally specify which will show default
@@ -218,89 +232,96 @@ public class detailsView extends AppCompatActivity
 
         // Add a marker in Sydney and move the camera
         LatLng latLng = new LatLng(Double.valueOf(strLatLng[0]), Double.valueOf(strLatLng[1]));
-        mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Kalurghat Bridge"));
+        mMap.addMarker(new MarkerOptions().position(latLng).title(Place_Name));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15.0f));
     }
 
-    /**
-     * Called when an item in the navigation menu is selected.
-     *
-     * @param item The selected item
-     * @return true to display the item as the selected item
-     */
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_home) {
-
-            finish();
-
-        } else if (id == R.id.nav_location) {
-
-            showLocationInfo();
-
-        } else if (id == R.id.nav_hotel) {
-
-            if (!TextUtils.isEmpty(Hotel_Info))
-                textView.setText(Hotel_Info);
-            else
-                textView.setText(getString(R.string.no_info_found));
-
-            showTextInfo();
-
-        } else if (id == R.id.nav_police) {
-
-            if (!TextUtils.isEmpty(Imp_Number))
-                textView.setText(Imp_Number);
-            else
-                textView.setText(getString(R.string.no_info_found));
-
-            showTextInfo();
-
-        } else if (id == R.id.nav_recent_event) {
-
-            Toast.makeText(detailsView.this, "Comming Soon...", Toast.LENGTH_LONG).show();
-
-        } else if (id == R.id.nav_images) {
-
-            showImageInfo();
-
-        } else if (id == R.id.nav_prev_tours) {
-
-            Toast.makeText(detailsView.this, "Comming Soon...", Toast.LENGTH_LONG).show();
-
-        } else if (id == R.id.nav_rating) {
-
-            showRating();
-
-        }
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
     void showLocationInfo() {
-        findViewById(R.id.mapLayout).setVisibility(View.VISIBLE);
-        findViewById(R.id.textLayout).setVisibility(View.GONE);
-        findViewById(R.id.imageLayout).setVisibility(View.GONE);
+
+        textLayout.animate().setDuration(shortAnimTime).alpha(
+                0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                textLayout.setVisibility(View.GONE);
+            }
+        });
+
+        imageLayout.animate().setDuration(shortAnimTime).alpha(
+                0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                imageLayout.setVisibility(View.GONE);
+            }
+        });
+
+        mapLayout.setAlpha(0);
+        mapLayout.setVisibility(View.VISIBLE);
+        mapLayout.animate().setDuration(shortAnimTime).alpha(
+                1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+            }
+        });
 
     }
 
     void showImageInfo() {
-        findViewById(R.id.mapLayout).setVisibility(View.GONE);
-        findViewById(R.id.textLayout).setVisibility(View.GONE);
-        findViewById(R.id.imageLayout).setVisibility(View.VISIBLE);
+
+        mapLayout.animate().setDuration(shortAnimTime).alpha(
+                0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mapLayout.setVisibility(View.GONE);
+            }
+        });
+
+        textLayout.animate().setDuration(shortAnimTime).alpha(
+                0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                textLayout.setVisibility(View.GONE);
+            }
+        });
+
+        imageLayout.setAlpha(0);
+        imageLayout.setVisibility(View.VISIBLE);
+        imageLayout.animate().setDuration(shortAnimTime).alpha(
+                1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+            }
+        });
+
     }
 
     void showTextInfo() {
-        findViewById(R.id.mapLayout).setVisibility(View.GONE);
-        findViewById(R.id.textLayout).setVisibility(View.VISIBLE);
-        findViewById(R.id.imageLayout).setVisibility(View.GONE);
+
+        mapLayout.animate().setDuration(shortAnimTime).alpha(
+                0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mapLayout.setVisibility(View.GONE);
+            }
+        });
+
+        imageLayout.animate().setDuration(shortAnimTime).alpha(
+                0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                imageLayout.setVisibility(View.GONE);
+            }
+        });
+
+        textLayout.setAlpha(0);
+        textLayout.setVisibility(View.VISIBLE);
+        textLayout.animate().setDuration(shortAnimTime).alpha(
+                1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+            }
+        });
 
     }
 
@@ -309,27 +330,32 @@ public class detailsView extends AppCompatActivity
         LayoutInflater inflater = LayoutInflater.from(this);
         final View inf = inflater.inflate(R.layout.rating_layout, null);
         alert.setView(inf);
-        final AlertDialog alertdi = alert.create();
-        alertdi.show();
-        b2 = (Button) inf.findViewById(R.id.btnSubmitRating);
-        rt = (RatingBar) inf.findViewById(R.id.ratingBar);
-        rt2 = (RatingBar) inf.findViewById(R.id.ratingBar2);
+        final AlertDialog alertDialog = alert.create();
+        alertDialog.show();
+        Button btnSubmit = (Button) inf.findViewById(R.id.btnSubmitRating);
+        Button btnCancel = (Button) inf.findViewById(R.id.btnCancel);
+        RatingBar ratingBar = (RatingBar) inf.findViewById(R.id.ratingBarUser);
 
-        rt.setRating(Rating);
-
-        rt2.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
 
                 Toast.makeText(detailsView.this, String.valueOf(v), Toast.LENGTH_SHORT).show();
             }
         });
-        b2.setOnClickListener(new View.OnClickListener() {
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 Toast.makeText(detailsView.this, "Thanks For the Rating", Toast.LENGTH_SHORT).show();
-                alertdi.dismiss();
+                alertDialog.dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
             }
         });
     }

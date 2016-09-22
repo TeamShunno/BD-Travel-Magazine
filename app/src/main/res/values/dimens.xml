@@ -9,4 +9,6 @@
     <dimen name="dialog_button_bar_top_margin">8dp</dimen>
     <dimen name="left_side_bar_width">56dp</dimen>
     <dimen name="shadow_height">3dp</dimen>
+    <dimen name="gMap_height">156dp</dimen>
+
 </resources>

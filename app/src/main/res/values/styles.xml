@@ -25,7 +25,7 @@
     <style name="dialog_button" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">fill_parent</item>
-        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
     </style>
 
     <style name="side_button" parent="@style/Widget.AppCompat.Button.Borderless">
@@ -36,7 +36,6 @@
     <style name="left_panel_button" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">56dp</item>
         <item name="android:layout_height">56dp</item>
-        <item name="android:layout_marginTop">4dp</item>
     </style>
 
 </resources>

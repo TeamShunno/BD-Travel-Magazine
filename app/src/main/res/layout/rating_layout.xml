@@ -9,21 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
     <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="USERS RATING"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <RatingBar
-        android:id="@+id/ratingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:isIndicator="true"
-        android:stepSize="0.1" />
-
-    <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +16,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <RatingBar
-        android:id="@+id/ratingBar2"
+        android:id="@+id/ratingBarUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -42,6 +27,11 @@
         android:layout_height="@dimen/dialog_button_bar_height"
         android:layout_marginTop="@dimen/dialog_button_bar_top_margin"
         android:gravity="center|end">
+
+        <Button
+            android:id="@+id/btnCancel"
+            style="@style/dialog_button"
+            android:text="Later" />
 
         <Button
             android:id="@+id/btnSubmitRating"
